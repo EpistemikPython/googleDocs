@@ -11,19 +11,19 @@ __author__         = "Mark Sattolo"
 __author_email__   = "epistemik@gmail.com"
 __google_api_python_client_py3_version__ = "1.2"
 __created__ = "2019-02-13"
-__updated__ = "2021-05-15"
+__updated__ = "2021-07-26"
 
 import sys
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
-sys.path.append("/newdata/dev/git/Python/utils")
-from mhsUtils import osp
+sys.path.append("/home/marksa/git/Python/utils")
+from mhsUtils import osp, BASE_PYTHON_FOLDER
 
 CURRENT_READING_GDOC = "1VlYk7qu7DFarxYOwK78TeoxAbwA3gCjza751xlDBxzU"
 
-SECRETS_DIR = "/newdata/dev/git/Python/Google/Docs/secrets"
+SECRETS_DIR = osp.join(BASE_PYTHON_FOLDER, "google" + osp.sep + "docs" + osp.sep + "secrets")
 CREDENTIALS_FILE:str = osp.join(SECRETS_DIR, "credentials" + osp.extsep + "json")
 DOCS_ACCESS_SCOPE:list  = ["https://www.googleapis.com/auth/documents"]
 DOCS_JSON_TOKEN:str     = "token.json"
@@ -53,12 +53,11 @@ def get_credentials():
 
 def main_doc():
     """
-    Shows basic usage of the Docs API.
-    Prints the title of a sample document.
+    Test basic usage of the Google Docs API.
+    Prints the title and body of a sample document.
     """
     try:
         creds = get_credentials()
-
         service = build("docs", "v1", credentials = creds)
 
         # Retrieve the documents contents from the Docs service.
