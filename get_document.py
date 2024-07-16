@@ -16,7 +16,6 @@ __created__ = "2019-02-13"
 __updated__ = "2024-07-16"
 
 from sys import path, argv
-import os
 import time
 import shutil
 from argparse import ArgumentParser
@@ -88,8 +87,9 @@ def main_doc():
     doc_title = str( document.get('title') )
     show(f"The title of the document is: {doc_title}")
     doc_body = document.get('body')
-    show(f"The body of the document is:\n{repr(doc_body)}")
-    show(f"\nacquire & display document elapsed time = {time.perf_counter() - start}")
+    if display_option:
+        show(f"The body of the document is:\n{repr(doc_body)}")
+    show(f"\nacquire (& display) document elapsed time = {time.perf_counter() - start}")
 
     if save_option:
         save_name = save_to_json(fname = doc_title.replace(osp.extsep, '_'), json_data = doc_body, indt = 2)
@@ -98,14 +98,18 @@ def main_doc():
 def set_args():
     arg_parser = ArgumentParser(description="get a document from my Google Docs", prog=f"python3 {get_filename(__file__)}")
     # optional arguments
-    arg_parser.add_argument('-s', '--save', action="store_true", default=False, help="Write the results to a JSON file")
-    arg_parser.add_argument('-i', '--id', type=str, default=READING_TEST_GDOC_ID, help="Google ID of an accessible document")
+    arg_parser.add_argument('-s', '--save', action="store_true", default=False,
+                            help="write the results to a JSON file; DEFAULT = False")
+    arg_parser.add_argument('-d', '--display', action="store_true", default=False,
+                            help="display the body of the retrieved file; DEFAULT = False")
+    arg_parser.add_argument('-i', '--id', type=str, default=READING_TEST_GDOC_ID,
+                            help="optional Google ID of an accessible document; DEFAULT = Reading.test.gdoc")
     return arg_parser
 
 def prepare_args(argl:list):
     args = set_args().parse_args(argl)
     show(f"save option = '{args.save}'")
-    return args.save, args.id
+    return args.save, args.display, args.id
 
 
 if __name__ == "__main__":
@@ -113,7 +117,7 @@ if __name__ == "__main__":
     show = log_control.show
     code = 0
     try:
-        save_option, doc_id = prepare_args(argv[1:])
+        save_option, display_option, doc_id = prepare_args(argv[1:])
         show(f"doc ID = '{doc_id}'")
         main_doc()
     except KeyboardInterrupt:
